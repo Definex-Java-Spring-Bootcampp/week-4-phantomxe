@@ -20,3 +20,19 @@
 ---
 *Eğitmen - Cem DIRMAN*  
 *Kolay Gelsin*
+
+
+# KredinBizde Services
+
+Here is the general schematic for our system's architecture.
+
+![Main Diagram](./image-files/maindiagram.svg)
+
+## Banks
+Each bank has own service, including creating new loan and listing the loans endpoints. 
+
+## Logs
+We can collect all logs via Kafka then saved to the MongoDB.
+
+## Notifications
+We have a basic notification service that consumes the queue on the RabbitMQ. 
