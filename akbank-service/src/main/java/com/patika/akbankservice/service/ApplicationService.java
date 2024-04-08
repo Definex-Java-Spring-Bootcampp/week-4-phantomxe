@@ -7,6 +7,8 @@ import com.patika.akbankservice.entity.Application;
 import com.patika.akbankservice.entity.Loan;
 import com.patika.akbankservice.factory.LoanFactory;
 import com.patika.akbankservice.repository.ApplicationRepository;
+import com.patika.akbankservice.repository.LoanRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,21 +22,17 @@ import java.util.List;
 public class ApplicationService {
 
     private LoanFactory loanFactory = new LoanFactory();
-    private ApplicationRepository applicationRepository = new ApplicationRepository();
+    private final ApplicationRepository applicationRepository;
+    private final LoanRepository loanRepository;
+    private final ApplicationConverter applicationConverter; 
 
-    private final ApplicationConverter applicationConverter;
-
-    /*
-    public ApplicationService(ApplicationConverter applicationConverter) {
-        this.applicationConverter = applicationConverter;
-    }*/
 
     public ApplicationResponse createApplication(ApplicationRequest request) {
         Application application = applicationConverter.toApplication(request);
-        Loan loan = loanFactory.generateLoan(request.getLoanType(), request.getAmount(), request.getInstallment());
-        log.info("Loan created." + loan.toString());
+       
+        log.info("Loan creating...");
+        Loan loan = loanRepository.save(loanFactory.generateLoan(request.getLoanType(), request.getAmount(), request.getInstallment()));
         application.setLoan(loan);
-
         applicationRepository.save(application);
 
         return applicationConverter.toResponse(application);
@@ -42,7 +40,7 @@ public class ApplicationService {
 
 
     public List<ApplicationResponse> getAll() {
-        List<Application> applications = applicationRepository.getAll();
+        List<Application> applications = applicationRepository.findAll();
 
         return applicationConverter.toResponseList(applications);
     }

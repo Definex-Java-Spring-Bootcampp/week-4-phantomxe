@@ -58,7 +58,7 @@ public class ApplicationService {
 
             return application;
         } catch (Exception e) {
-            log.error("Akbank servisine istek atılırken hata oluştu");
+            log.error("Garanti servisine istek atılırken hata oluştu");
         }
 
         throw new NoSuitableLoanException("Uygun kredi bulunamadı");
@@ -90,8 +90,21 @@ public class ApplicationService {
         User user = userService.getByEmail(email);
         log.info("user bulundu");
 
-        List<ApplicationResponse> akbankApps = akbankServiceClient.getApplicationsByUserId(prepareFindallRequest(user));
-        List<ApplicationResponse> garantiApps = garantiServiceClient.getApplicationsByUserId(prepareFindallRequest(user));
+        List<ApplicationResponse> akbankApps = Collections.emptyList();
+        List<ApplicationResponse> garantiApps = Collections.emptyList();
+
+        try {
+            akbankApps = akbankServiceClient.getApplicationsByUserId(prepareFindallRequest(user));
+        } catch (Exception e) {
+            log.error("Akbank servisine istek atılırken hata oluştu");
+        }
+        
+
+        try {
+            garantiApps = garantiServiceClient.getApplicationsByUserId(prepareFindallRequest(user));
+        } catch (Exception e) {
+            log.error("Garanti servisine istek atılırken hata oluştu");
+        }
 
         return Stream.concat(akbankApps.stream(), garantiApps.stream()).toList();
     }

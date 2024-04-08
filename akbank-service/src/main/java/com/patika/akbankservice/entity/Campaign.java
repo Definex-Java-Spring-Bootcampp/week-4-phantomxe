@@ -1,5 +1,6 @@
 package com.patika.akbankservice.entity;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import com.patika.akbankservice.enums.SectorType;
@@ -26,7 +27,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Entity
 @Table(name = "campaign")
-public class Campaign {
+public class Campaign implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
