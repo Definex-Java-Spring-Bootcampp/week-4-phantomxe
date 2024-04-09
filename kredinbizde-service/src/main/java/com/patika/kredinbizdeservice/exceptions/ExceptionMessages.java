@@ -15,4 +15,5 @@ public class ExceptionMessages {
     }*/
 
     public static final String USER_NOT_FOUND = "user bulunamadı!";
+    public static final String USED_EMAIL = "email adresi kullanılmaktadır!";
 }

@@ -1,16 +1,24 @@
 package com.patika.kredinbizdeservice.service;
 
+import com.patika.kredinbizdeservice.dto.request.UserCreateRequest;
 import com.patika.kredinbizdeservice.exceptions.ExceptionMessages;
 import com.patika.kredinbizdeservice.exceptions.KredinbizdeException;
+import com.patika.kredinbizdeservice.model.Address;
 import com.patika.kredinbizdeservice.model.User;
 import com.patika.kredinbizdeservice.producer.NotificationProducer;
 import com.patika.kredinbizdeservice.producer.dto.NotificationDTO;
 import com.patika.kredinbizdeservice.producer.enums.NotificationType;
+import com.patika.kredinbizdeservice.repository.AddressRepository;
 import com.patika.kredinbizdeservice.repository.UserRepository;
+
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,18 +27,61 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-    private UserRepository userRepository = new UserRepository();
-
+    private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
     private final NotificationProducer notificationProducer;
+    private byte[] salt = new byte[16];
 
-    public User save(User user) {
-        System.out.println("userRepository: " + userRepository.hashCode());
+    @PostConstruct
+    public void init() {
+        SecureRandom random = new SecureRandom();
+        random.nextBytes(salt);
+    }
 
-        userRepository.save(user);
+    public String hashPassword(String password) { 
+        try {
+            MessageDigest mDigest = MessageDigest.getInstance("SHA-512"); // Singleton Design Pattern
+            mDigest.update(salt);
+            byte[] result = mDigest.digest(password.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i< result.length ;i++){
+                sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Hashing failed on user creation");
+        } 
+    }
 
-        notificationProducer.sendNotification(prepareNotificationDTO(NotificationType.EMAIL, user.getEmail()));
+    public User save(UserCreateRequest request) { 
 
-        return user;
+        Address new_address = addressRepository.save(
+            Address.builder()
+                .addressTitle(request.getAddressTitle())
+                .addressDescription(request.getAddressDescription())
+                .province(request.getProvince())
+                .build()
+        );
+
+        try {
+            User new_user = userRepository.save(
+                User.builder()
+                    .name(request.getName())
+                    .surname(request.getSurname())
+                    .birthDate(request.getBirthDate())
+                    .email(request.getEmail())
+                    .password(hashPassword(request.getPassword()))
+                    .phoneNumber(request.getPhoneNumber())
+                    .address(new_address)
+                    .build()
+                    
+            );
+            notificationProducer.sendNotification(prepareNotificationDTO(NotificationType.EMAIL, new_user.getEmail()));
+
+            return new_user;
+        } catch (Exception e) {
+            throw new KredinbizdeException(ExceptionMessages.USED_EMAIL);
+        }  
     }
 
     private NotificationDTO prepareNotificationDTO(NotificationType notificationType, String email) {
@@ -44,7 +95,7 @@ public class UserService {
 
     public List<User> getAll() {
         System.out.println("userRepository: " + userRepository.hashCode());
-        return userRepository.getAll();
+        return userRepository.findAll();
     }
 
 
@@ -58,33 +109,11 @@ public class UserService {
             user = foundUser.get();
         }
 
-        //throw new RuntimeException();
-
-        // throw new NullPointerException();
-
-        //throw new IllegalArgumentException("exception fırlatıldı");
-
-        // throw new ArithmeticException();
-
        return user;
     }
 
-    public User update(String email, User user) {
-
-        Optional<User> foundUser = userRepository.findByEmail(email);
-
-        foundUser.get().setName(user.getName());
-
-        foundUser.get().setSurname(user.getSurname());
-
-        userRepository.delete(user);
-
-        userRepository.save(foundUser.get());
-
-        return foundUser.get();
-    }
-
     public User getById(Long userId) {
-        return userRepository.findByUserId(userId);
+        Optional<User> user = userRepository.findById(userId);
+        return user.orElseThrow(() -> new KredinbizdeException(ExceptionMessages.USER_NOT_FOUND));
     }
 }
