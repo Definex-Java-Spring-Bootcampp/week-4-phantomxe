@@ -35,6 +35,9 @@ public class CreditCard implements Serializable, Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "fee")
     private BigDecimal fee;
 
