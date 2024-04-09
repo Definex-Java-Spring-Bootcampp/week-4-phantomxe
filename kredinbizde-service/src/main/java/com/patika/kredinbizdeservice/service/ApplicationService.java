@@ -28,8 +28,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ApplicationService {
 
-    private final ApplicationRepository applicationRepository = new ApplicationRepository();
-    private final ApplicationConverter applicationConverter;
+    //private final ApplicationRepository applicationRepository = new ApplicationRepository(); 
+    //private final ApplicationConverter applicationConverter;
+    // We dont need anymore. We are using client services to get applications
+ 
     private final UserService userService;
     private final AkbankServiceClient akbankServiceClient;
     private final GarantiServiceClient garantiServiceClient;
@@ -39,7 +41,7 @@ public class ApplicationService {
         User user = userService.getByEmail(request.getEmail());
         log.info("user bulundu");
 
-        Application application = applicationConverter.toApplication(request, user); 
+        //Application application = applicationConverter.toApplication(request, user); 
 
         try {
             ApplicationResponse akbankApplicationResponse = akbankServiceClient.createApplication(prepareAkbankApplicationRequest(user, request));
@@ -64,7 +66,7 @@ public class ApplicationService {
     private AkbankApplicationRequest prepareAkbankApplicationRequest(User user, ApplicationRequest request) {
         AkbankApplicationRequest applicationRequest = new AkbankApplicationRequest();
 
-        applicationRequest.setUserId(1L);
+        applicationRequest.setUserId(user.getId());
         applicationRequest.setAmount(request.getAmount());
         applicationRequest.setInstallment(request.getInstallment());
         applicationRequest.setLoanType(request.getLoanType());
@@ -75,7 +77,7 @@ public class ApplicationService {
     private GarantiApplicationRequest prepareGarantiApplicationRequest(User user, ApplicationRequest request) {
         GarantiApplicationRequest applicationRequest = new GarantiApplicationRequest();
 
-        applicationRequest.setUserId(1L);
+        applicationRequest.setUserId(user.getId());
         applicationRequest.setAmount(request.getAmount());
         applicationRequest.setInstallment(request.getInstallment());
         applicationRequest.setLoanType(request.getLoanType());
@@ -107,6 +109,6 @@ public class ApplicationService {
     }
 
     private Long prepareFindallRequest(User user) {
-        return 1L;
+        return user.getId();
     }
 }
