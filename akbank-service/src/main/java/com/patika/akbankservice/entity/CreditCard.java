@@ -8,6 +8,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +28,7 @@ import java.io.Serializable;
 @ToString
 @Builder
 @Entity
-@Table(name = "application")
+@Table(name = "creditcard")
 public class CreditCard implements Serializable, Product {
 
     @Id
@@ -35,7 +38,12 @@ public class CreditCard implements Serializable, Product {
     @Column(name = "fee")
     private BigDecimal fee;
 
-    
+    @ManyToMany
+    @JoinTable(
+        name = "creditcard_campaign",
+        joinColumns = @JoinColumn(name = "creditcard_id"),
+        inverseJoinColumns = @JoinColumn(name = "campaign_id")
+    )
     private List<Campaign> campaignList;
 
     private final String bank = "akbank";
