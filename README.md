@@ -6,18 +6,6 @@ Here is the general schematic for our system's architecture.
 
 ![Main Diagram](./image-files/maindiagram.svg)
 
-## Banks
-Each bank has own service, including creating new loan and listing the loans endpoints. Also each bank has own application repository.
-
-## Kredinbizde
-This service can create user, list user and has user repository. But when user needs to check their applications or create new application, connects to each bank that registered on service, fetchs applications or creates applications over client.
-
-## Logs
-We can collect all logs via Kafka then saved to the MongoDB.
-
-## Notifications
-We have a basic notification service that consumes the queue on the RabbitMQ. 
-
 # Installation
 
 Firstly, We need to go `cd kafka/mongodb-kafka-base` then open a terminal and run `docker-compose -p mongo-kafka up`. 
@@ -35,4 +23,36 @@ We need to configure database for one time. Open another terminal and run `docke
 Enter `mysql -uroot -p -A` command and enter password. 
 Then we need to run commands at `initial_db.sql`.
 
-Initial setup is complete. We can start all services!
+Initial setup is complete. We can start all services and use via gateway `localhost:8084` or directly to `localhost:8080`.
+
+## Banks
+Each bank has own service, including creating new loan and listing the loans endpoints. Also each bank has own application repository.
+
+## Kredinbizde
+This service can create user, list user and has user repository. But when user needs to check their applications or create new application, connects to each bank that registered on service, fetchs applications or creates applications over client.
+
+## Logs
+We can collect all logs via Kafka then saved to the MongoDB.
+
+## Notifications
+We have a basic notification service that consumes the queue on the RabbitMQ. 
+
+## Screenshots
+
+### Check users
+![](./image-files/ss0.png)
+
+### Create new user
+![](./image-files/ss1.png)
+
+### Create new loan application
+![](./image-files/ss2.png)
+
+### Get applications of a user
+![](./image-files/ss3.png)
+
+### Logs on MongoDB
+![](./image-files/mongologs.png)
+
+### Eureka Discovery
+![](./image-files/euraka.png)
