@@ -30,13 +30,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final NotificationProducer notificationProducer;
-    private byte[] salt = new byte[16];
+    private final byte[] salt = new byte[]{15, 46, 28, 20, 124, 39, 127, 42, 36, 15, 21, 104, 103, 92, 19, 24};
 
+    /*  every reboot of the application, the salt will be different, so hashes are wrong.
     @PostConstruct
     public void init() {
         SecureRandom random = new SecureRandom();
         random.nextBytes(salt);
-    }
+    } */
 
     public String hashPassword(String password) { 
         try {
