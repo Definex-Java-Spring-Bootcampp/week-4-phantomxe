@@ -1,6 +1,5 @@
 package com.patika.akbankservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.patika.akbankservice.enums.ApplicationStatus;
 
 import jakarta.persistence.Column;

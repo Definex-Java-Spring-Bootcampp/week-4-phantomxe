@@ -34,7 +34,7 @@ public class ApplicationService {
     private final AkbankServiceClient akbankServiceClient;
     private final GarantiServiceClient garantiServiceClient;
 
-    public Application createApplication(ApplicationRequest request) {
+    public ApplicationResponse createApplication(ApplicationRequest request) {
 
         User user = userService.getByEmail(request.getEmail());
         log.info("user bulundu");
@@ -43,20 +43,17 @@ public class ApplicationService {
 
         try {
             ApplicationResponse akbankApplicationResponse = akbankServiceClient.createApplication(prepareAkbankApplicationRequest(user, request));
-        
-            application.setLoan(akbankApplicationResponse.getLoan());
+         
 
-            return application;
+            return akbankApplicationResponse;
         } catch (Exception e) {
             log.error("Akbank servisine istek atılırken hata oluştu");
         }
 
         try {
             ApplicationResponse garantiApplicationResponse = garantiServiceClient.createApplication(prepareGarantiApplicationRequest(user, request));
-        
-            application.setLoan(garantiApplicationResponse.getLoan());
-
-            return application;
+         
+            return garantiApplicationResponse;
         } catch (Exception e) {
             log.error("Garanti servisine istek atılırken hata oluştu");
         }

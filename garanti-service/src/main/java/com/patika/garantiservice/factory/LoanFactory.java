@@ -40,7 +40,7 @@ public class LoanFactory {
  
         for(LoanLimit limit : mylimits) {
             if(limit.getMinAmount().compareTo(amount) >= 0 && limit.getMaxAmount().compareTo(amount) <= 0){
-                return new Loan(amount, installment, limit.getInterestRate(), loanType);
+                return Loan.builder().amount(amount).installment(installment).interestRate(limit.getInterestRate()).loanType(loanType).build();   // (amount, installment, limit.getInterestRate(), loanType);
             }
         }
 

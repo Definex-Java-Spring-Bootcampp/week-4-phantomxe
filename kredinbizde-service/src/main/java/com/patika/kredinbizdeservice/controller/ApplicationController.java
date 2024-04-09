@@ -21,7 +21,7 @@ public class ApplicationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Application> createApplication(@RequestBody ApplicationRequest request) {
+    public ResponseEntity<ApplicationResponse> createApplication(@RequestBody ApplicationRequest request) {
         return ResponseEntity.ok().body(applicationService.createApplication(request));
     }
 
