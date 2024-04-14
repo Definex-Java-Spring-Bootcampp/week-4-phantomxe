@@ -74,6 +74,7 @@ public class UserService {
                     .password(hashPassword(request.getPassword()))
                     .phoneNumber(request.getPhoneNumber())
                     .address(new_address)
+                    .isActive(true)
                     .build()
                     
             );
