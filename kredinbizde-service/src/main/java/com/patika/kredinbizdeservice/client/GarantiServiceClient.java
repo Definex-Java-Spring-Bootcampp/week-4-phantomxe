@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.patika.kredinbizdeservice.client.dto.request.GarantiApplicationRequest;
 import com.patika.kredinbizdeservice.client.dto.response.ApplicationResponse;
+import com.patika.kredinbizdeservice.client.dto.response.CreditCardResponse;
 
 @FeignClient("garanti-service")
 public interface GarantiServiceClient {
@@ -22,4 +23,7 @@ public interface GarantiServiceClient {
 
     @GetMapping("api/garanti/v1/applications/{userId}")
     List<ApplicationResponse> getApplicationsByUserId(@PathVariable Long userId);
+
+    @GetMapping("api/akbank/v1/cards")
+    List<CreditCardResponse> getCreditCards();
 }

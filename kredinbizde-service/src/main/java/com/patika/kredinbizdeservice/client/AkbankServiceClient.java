@@ -2,7 +2,7 @@ package com.patika.kredinbizdeservice.client;
 
 import com.patika.kredinbizdeservice.client.dto.request.AkbankApplicationRequest;
 import com.patika.kredinbizdeservice.client.dto.response.ApplicationResponse;
-import com.patika.kredinbizdeservice.client.dto.response.ApplicationListResponse;
+import com.patika.kredinbizdeservice.client.dto.response.CreditCardResponse; 
 
 import java.util.List;
 
@@ -24,4 +24,7 @@ public interface AkbankServiceClient {
 
     @GetMapping("api/akbank/v1/applications/{userId}")
     List<ApplicationResponse> getApplicationsByUserId(@PathVariable Long userId);
+
+    @GetMapping("api/akbank/v1/cards")
+    List<CreditCardResponse> getCreditCards();
 }
